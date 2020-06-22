@@ -1,0 +1,38 @@
+service: passport-serverless
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
+
+custom:
+  STAGE: ${self:provider.stage}
+  CONFIG: ${file(./src/config/${opt:stage, self:provider.stage, 'dev'}.js):CONFIG}
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: ap-northeast-2
+  stag: ${opt:stage, 'dev'}
+  environment:
+    STAGE: ${self:custom.STAGE}
+    URL: ${self:custom.CONFIG.URL}
+    GOOGLE_AUTH_CLIENT_ID: ${self:custom.CONFIG.GOOGLE_AUTH_CLIENT_ID}
+    GOOGLE_AUTH_CLIENT_SECRET: ${self:custom.CONFIG.GOOGLE_AUTH_CLIENT_SECRET}
+    GOOGLE_AUTH_CLIENT_CALLBACK_URL: ${self:custom.CONFIG.GOOGLE_AUTH_CLIENT_CALLBACK_URL}
+
+functions:
+  server:
+    handler: src/handler.server
+    events:
+      - http:
+          path: /auth/login/google
+          method: get
+      - http:
+          path: /auth/login/google/callback
+          method: get
+      - http:
+          path: /auth/refresh_token
+          method: get
+      - http:
+          path: /auth/logout
+          method: get
