@@ -8,7 +8,8 @@ const {
   STAGE = "dev",
   GOOGLE_AUTH_CLIENT_ID = "",
   GOOGLE_AUTH_CLIENT_SECRET = "",
-  GOOGLE_AUTH_CLIENT_CALLBACK_URL = "",
+  GOOGLE_AUTH_LOGIN_URL = "/auth/login/google",
+  GOOGLE_AUTH_LOGIN_CALLBACK_URL = "/callback",
 } = process.env;
 
 export const GoogleUse = () => {
@@ -17,7 +18,12 @@ export const GoogleUse = () => {
       {
         clientID: GOOGLE_AUTH_CLIENT_ID,
         clientSecret: GOOGLE_AUTH_CLIENT_SECRET,
-        callbackURL: URL + "/" + STAGE + GOOGLE_AUTH_CLIENT_CALLBACK_URL,
+        callbackURL:
+          URL +
+          "/" +
+          STAGE +
+          GOOGLE_AUTH_LOGIN_URL +
+          GOOGLE_AUTH_LOGIN_CALLBACK_URL,
       },
       (accessToken, refreshToken, profile, done) => {
         const { sub, name, email, picture: avatar, locale } = profile._json;
@@ -42,6 +48,6 @@ const Option = {
 
 const router = Router();
 router.get("/", authenticate(Option));
-router.get("/callback", callback(Option));
+router.get(GOOGLE_AUTH_LOGIN_CALLBACK_URL, callback(Option));
 
 export default router;

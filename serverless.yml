@@ -6,33 +6,38 @@ plugins:
 
 custom:
   STAGE: ${self:provider.stage}
-  CONFIG: ${file(./src/config/${opt:stage, self:provider.stage, 'dev'}.js):CONFIG}
+  CONFIG: ${file(./src/config/${opt:stage, self:provider.stage, 'sample'}.js):CONFIG}
 
 provider:
   name: aws
   runtime: nodejs12.x
   region: ap-northeast-2
-  stag: ${opt:stage, 'dev'}
+  stag: ${opt:stage, 'sample'}
   environment:
     STAGE: ${self:custom.STAGE}
     URL: ${self:custom.CONFIG.URL}
+    REFRESH_TOKEN_URL: ${self:custom.CONFIG.REFRESH_TOKEN_URL}
+    LOGOUT_URL: ${self:custom.CONFIG.LOGOUT_URL}
+    SUCCESS_REDIRECT_URL: ${self:custom.CONFIG.SUCCESS_REDIRECT_URL}
+    FAIL_REDIRECT_URL: ${self:custom.CONFIG.FAIL_REDIRECT_URL}
     GOOGLE_AUTH_CLIENT_ID: ${self:custom.CONFIG.GOOGLE_AUTH_CLIENT_ID}
     GOOGLE_AUTH_CLIENT_SECRET: ${self:custom.CONFIG.GOOGLE_AUTH_CLIENT_SECRET}
-    GOOGLE_AUTH_CLIENT_CALLBACK_URL: ${self:custom.CONFIG.GOOGLE_AUTH_CLIENT_CALLBACK_URL}
+    GOOGLE_AUTH_LOGIN_URL: ${self:custom.CONFIG.GOOGLE_AUTH_LOGIN_URL}
+    GOOGLE_AUTH_LOGIN_CALLBACK_URL: ${self:custom.CONFIG.GOOGLE_AUTH_LOGIN_CALLBACK_URL}
 
 functions:
   server:
     handler: src/handler.server
     events:
       - http:
-          path: /auth/login/google
+          path: ${self:custom.CONFIG.REFRESH_TOKEN_URL}
           method: get
       - http:
-          path: /auth/login/google/callback
+          path: ${self:custom.CONFIG.LOGOUT_URL}
           method: get
       - http:
-          path: /auth/refresh_token
+          path: ${self:custom.CONFIG.GOOGLE_AUTH_LOGIN_URL}
           method: get
       - http:
-          path: /auth/logout
+          path: ${self:custom.CONFIG.GOOGLE_AUTH_LOGIN_URL}${self:custom.CONFIG.GOOGLE_AUTH_LOGIN_CALLBACK_URL}
           method: get
