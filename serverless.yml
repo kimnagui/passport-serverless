@@ -3,27 +3,42 @@ service: passport-serverless
 plugins:
   - serverless-plugin-typescript
   - serverless-offline
+  - serverless-domain-manager
 
 custom:
   STAGE: ${self:provider.stage}
-  CONFIG: ${file(./src/config/${opt:stage, self:provider.stage, 'sample'}.js):CONFIG}
+  CONFIG: ${file(./src/config/${self:provider.stage}.js):CONFIG}
+  serverless-offline:
+    httpPort: 4000
+  customDomain:
+    domainName: api.nagui.me
+    hostedZoneId: Z1J9KTGF29Z0N2
+    certificateName: "*.nagui.me"
+    certificateArn: arn:aws:acm:us-east-1:719929074005:certificate/926db145-ffc4-4bec-98fc-966e4ffcb6c5
+    basePath: ""
+    stage: ${self:provider.stage}
+    createRoute53Record: true
 
 provider:
   name: aws
   runtime: nodejs12.x
   region: ap-northeast-2
-  stag: ${opt:stage, 'sample'}
+  stag: ${opt:stage, 'dev'}
   environment:
     STAGE: ${self:custom.STAGE}
     URL: ${self:custom.CONFIG.URL}
+    TOKEN_SECRET_KEY: ${self:custom.CONFIG.TOKEN_SECRET_KEY}
+    TOKEN_ACCESS_EXPIRES: ${self:custom.CONFIG.TOKEN_ACCESS_EXPIRES}
+    TOEKN_REFRESH_EXPIRES: ${self:custom.CONFIG.TOEKN_REFRESH_EXPIRES}
     REFRESH_TOKEN_URL: ${self:custom.CONFIG.REFRESH_TOKEN_URL}
     LOGOUT_URL: ${self:custom.CONFIG.LOGOUT_URL}
     SUCCESS_REDIRECT_URL: ${self:custom.CONFIG.SUCCESS_REDIRECT_URL}
     FAIL_REDIRECT_URL: ${self:custom.CONFIG.FAIL_REDIRECT_URL}
+    LOGOUT_REDIRECT_URL: ${self:custom.CONFIG.LOGOUT_REDIRECT_URL}
     GOOGLE_AUTH_CLIENT_ID: ${self:custom.CONFIG.GOOGLE_AUTH_CLIENT_ID}
     GOOGLE_AUTH_CLIENT_SECRET: ${self:custom.CONFIG.GOOGLE_AUTH_CLIENT_SECRET}
     GOOGLE_AUTH_LOGIN_URL: ${self:custom.CONFIG.GOOGLE_AUTH_LOGIN_URL}
-    GOOGLE_AUTH_LOGIN_CALLBACK_URL: ${self:custom.CONFIG.GOOGLE_AUTH_LOGIN_CALLBACK_URL}
+    GOOGLE_AUTH_LOGIN_CALLBACK: ${self:custom.CONFIG.GOOGLE_AUTH_LOGIN_CALLBACK}
 
 functions:
   server:
@@ -39,5 +54,5 @@ functions:
           path: ${self:custom.CONFIG.GOOGLE_AUTH_LOGIN_URL}
           method: get
       - http:
-          path: ${self:custom.CONFIG.GOOGLE_AUTH_LOGIN_URL}${self:custom.CONFIG.GOOGLE_AUTH_LOGIN_CALLBACK_URL}
+          path: ${self:custom.CONFIG.GOOGLE_AUTH_LOGIN_URL}${self:custom.CONFIG.GOOGLE_AUTH_LOGIN_CALLBACK}
           method: get

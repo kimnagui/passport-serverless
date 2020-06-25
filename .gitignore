@@ -8,4 +8,4 @@ jspm_packages
 
 # config
 src/config/*
-!src/config/sample.js
+!src/config/dev.js

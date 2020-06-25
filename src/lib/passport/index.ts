@@ -12,17 +12,16 @@ const {
 
 export default (app: Express) => {
   app.use(passport.initialize());
-
   passport.serializeUser((user, done) => {
     done(null, user);
   });
-
   passport.deserializeUser((user, done) => {
     done(null, user);
   });
 
   GoogleUse();
   app.use(GOOGLE_AUTH_LOGIN_URL, Google);
+
   app.use(REFRESH_TOKEN_URL, RefreshToken);
   app.use(LOGOUT_URL, Logout);
 };
