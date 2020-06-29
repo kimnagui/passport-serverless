@@ -10,14 +10,6 @@ const {
   TOKEN_ACCESS_EXPIRES = "1h",
 } = process.env;
 
-export const verify = (profile: any, done: any) => {
-  // Verify Callback Example
-  // User.findOrCreate({ googleId: profile.id }, function (err, user) {
-  //     return done(err, user);
-  // });
-  return done(null, profile);
-};
-
 export const authenticate = (options: IOption) => {
   return (req: any, res: any, next: any) => {
     const { state = "" } = req.query;
@@ -28,6 +20,14 @@ export const authenticate = (options: IOption) => {
     });
     authenticator(req, res, next);
   };
+};
+
+export const verify = (profile: any, done: any) => {
+  // Verify Callback Example
+  // User.findOrCreate({ googleId: profile.id }, function (err, user) {
+  //     return done(err, user);
+  // });
+  return done(null, profile);
 };
 
 export const callback = (options: IOption) => [
@@ -49,6 +49,7 @@ export const callback = (options: IOption) => [
           //   domain: "",
           secure: STAGE !== "dev",
           httpOnly: true,
+          sameSite: "lax",
           maxAge: ms(TOKEN_ACCESS_EXPIRES) / 1000,
         });
 
