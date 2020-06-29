@@ -49,7 +49,7 @@ export const callback = (options: IOption) => [
           //   domain: "",
           secure: STAGE !== "dev",
           httpOnly: true,
-          sameSite: "lax",
+          sameSite: "Lax",
           maxAge: ms(TOKEN_ACCESS_EXPIRES) / 1000,
         });
 
