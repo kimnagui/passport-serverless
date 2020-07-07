@@ -1,7 +1,5 @@
 # serverless aws lambda nodejs passport
 
-> 아직 작성 및 개발 중..
-
 AWS Lambda와 Serverless 프레임워크를 활용하여 Cookie-JWT 방식의 passport 소셜간편로그인 구현.
 
 ## USAGE
